@@ -7,8 +7,8 @@ button.addEventListener("click", async function(){
         methods: 'GET'
     });
     let decoded = (await results.json())
-    //console.log(Math.floor(Math.random() * 2))
     image.src = decoded[Math.floor(Math.random() * decoded.length)]
     image.style.height = "auto"
     image.style.width = "400px"
 })
+

@@ -1,33 +1,40 @@
 import requests
 
-fish_watch_api = 'https://www.fishwatch.gov/api/species/'
+api_names_endpoint = 'http://127.0.0.1:5000/names/'
+api_search_endpoint = 'http://127.0.0.1:5000/search/'
 
-print("Making request...")
-resp = requests.get(fish_watch_api)
-
-# Make sure we recieve a proper response
-if resp.ok:
-    print("We got a response")
+#### Test fish names ####
+fish_names_response = requests.get(api_names_endpoint)
+print("---Testing names endpoint---")
+if fish_names_response.ok:
+    print("[OK] Got fish names!")
 else:
-    print("There was an error!")
+    print("[FAIL] An error occurred")
     raise Exception()
 
-# Convert response (json string) to usable structure (dictionary)
-decoded = resp.json()
+fish_names = fish_names_response.json()
+print("---Testing number of fish names (must be > 50)")
+if len(fish_names) > 50:
+    print("[OK] We have a lot of names!")
+else:
+    print("[FAIL] An error occurred")
+    raise Exception()
 
-# Print the first five results
-first_result = decoded[0]
-print("All possible keys")
-for k in first_result.keys():
-    print("Key: " + k)
+#### Test fish search ####
+five_fish = fish_names[:5]
+for name in five_fish:
+    print("---Searching for {}---".format(name))
+    fish_names_response = requests.get(api_search_endpoint + name)
+    if not fish_names_response.ok:
+        print("[FAIL] An error occurred")
+        raise Exception()
+    
+    decoded = fish_names_response.json()[0]
+    if decoded.get("Biology", None) == None:
+        print("[FAIL] Could not identify Biology")
+        raise Exception()
+    if decoded.get("Population", None) == None:
+        print("[FAIL] Could not identify Population")
+        raise Exception()
 
-print("---Species Name---")
-print(first_result['Species Name'])
-print("---Location---")
-print(first_result['Location'])
-print("---Population---")
-# Trying printing a different key! (Hint: Look at the output for choices)
-print(first_result['Population'])
-print("---Biology---")
-# Experiment some more!
-print(first_result['Biology'])
+print("[OK] All tests have passed!")

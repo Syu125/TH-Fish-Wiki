@@ -8,6 +8,7 @@ from starlette.responses import RedirectResponse
 
 app = FastAPI()
 app.mount("/home", StaticFiles(directory="static"), name="static")
+fish_watch_api = 'https://www.fishwatch.gov/api/species/'
 
 
 @app.get("/")
